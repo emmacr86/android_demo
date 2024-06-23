@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.Color
 
 // Main color for top App Bar and Bottom Navigation Bar
 val PrimaryColor = Color(0xFF31488B)
+//Background for card view before the image is loaded
+val ImageBackgroundColor = Color(0xFF566388)
 
 // Light theme colors
 val LightPrimaryVariantColor = Color(0xFF111D4A)

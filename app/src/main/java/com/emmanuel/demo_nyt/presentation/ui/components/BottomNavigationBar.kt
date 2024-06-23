@@ -17,7 +17,12 @@ import androidx.navigation.NavHostController
 import com.emmanuel.demo_nyt.presentation.theme.PrimaryColor
 import com.emmanuel.demo_nyt.presentation.ui.navigation.BottomNavigationItem
 
-//Bottom navigation bar for the app iterates all bottom navigation items
+/**
+ * Bottom Navigation Bar.
+ *
+ * @param navController receive the navigation controller to navigate between screens.
+ * @return a composable that displays the bar at the bottom of the screen.
+ */
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
 

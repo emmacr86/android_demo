@@ -16,7 +16,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.emmanuel.demo_nyt.presentation.theme.PrimaryColor
 import com.emmanuel.demo_nyt.presentation.ui.navigation.BottomNavigationRoutes
 
-//App bar for the application
+/**
+ * App Bar.
+ *
+ * @param navController receive the navigation controller to navigate between screens.
+ * @return a composable that displays the app bar and set the title depending on the current screen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(navController: NavHostController) {

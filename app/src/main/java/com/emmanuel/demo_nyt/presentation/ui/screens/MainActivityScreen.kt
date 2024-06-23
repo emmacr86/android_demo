@@ -2,8 +2,10 @@ package com.emmanuel.demo_nyt.presentation.ui.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,20 +24,18 @@ fun MainActivityScreen() {
         val navController = rememberNavController()
 
         Scaffold(
-            topBar = { AppBar( navController = navController,) },
-
-            bottomBar = {
-                BottomNavigationBar(
-                    navController = navController,
-                )
-            }
-        ) {
-            NavHost(navController, startDestination = BottomNavigationRoutes.Home.route) {
+            topBar = { AppBar(navController = navController) },
+            bottomBar = { BottomNavigationBar(navController = navController) }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = BottomNavigationRoutes.Home.route,
+                modifier = Modifier.padding(innerPadding)
+            ) {
                 composable(BottomNavigationRoutes.Home.route) { HomeScreen(navController) }
                 composable(BottomNavigationRoutes.Topics.route) { TopicsScreen(navController) }
                 composable(BottomNavigationRoutes.Details.route) { DetailsScreen() }
             }
         }
     }
-
 }
