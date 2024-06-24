@@ -30,6 +30,7 @@ fun AppBar(navController: NavHostController) {
 
     val routeTitleMap = mapOf(
         NavigationRoutes.Home.route to "Home",
+        NavigationRoutes.Settings.route to "Settings",
         "Details" to "Details"
     )
 

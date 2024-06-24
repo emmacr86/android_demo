@@ -33,7 +33,7 @@ fun MainActivityScreen() {
         Scaffold(
             topBar = { AppBar(navController = navController) },
             bottomBar = {
-                if (currentDestination == NavigationRoutes.Home.route) {
+                if (currentDestination != NavigationRoutes.Details.route) {
                     BottomNavigationBar(navController = navController)
                 }
             }
@@ -47,6 +47,7 @@ fun MainActivityScreen() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(NavigationRoutes.Home.route) { HomeScreen(navController) }
+                composable(NavigationRoutes.Settings.route) { SettingsScreen() }
                 composable(
                     route = NavigationRoutes.Details.route,
                     arguments = listOf(

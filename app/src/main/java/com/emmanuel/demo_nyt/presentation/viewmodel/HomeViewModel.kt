@@ -16,6 +16,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.emmanuel.demo_nyt.R
 import com.emmanuel.demo_nyt.domain.model.Article
+import com.emmanuel.demo_nyt.domain.repository.SettingsRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,60 +41,75 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     private fun requestArticles() {
         if (isInternetAvailable()) {
-            viewModelScope.launch(context = Dispatchers.IO) {
-                val url =
-                    application.getString(R.string.articles_url) + "ILz49PAc7OddsjNArl8r71CtuhAGvAaJ"
-                val queue = Volley.newRequestQueue(application.applicationContext)
-                val request: JsonObjectRequest = @SuppressLint("NullSafeMutableLiveData")
-                object : JsonObjectRequest(
-                    Method.GET,
-                    url,
-                    null,
-                    { response ->
+            viewModelScope.launch(context = Dispatchers.Main) {
 
-                        try {
-                            Log.d(tag, response.toString())
-                            val articles: JSONArray = response.getJSONArray("results")
-                            val list: ArrayList<Article?> = ArrayList()
+                val settingsRepository = SettingsRepository()
+                val apiKey = settingsRepository.getSettingByName("api_key")?.value
+                    ?: application.getString(R.string.api_key)
 
-                            for (i in 0 until articles.length()) {
-                                val item = articles.getJSONObject(i)
-                                Log.d(tag, "Article added: $item")
-                                val article = Gson().fromJson<Article>(
-                                    item.toString(),
-                                    Article::class.java
-                                )
-                                list.add(article)
-                            }
-                            _articles.postValue(list)
-                            Log.d(tag, "Article list size " + list.size)
-                            if (list.isEmpty()) {
+                if (apiKey.isNotEmpty()) {
+                    val url =
+                        application.getString(R.string.articles_url) + apiKey
+                    val queue = Volley.newRequestQueue(application.applicationContext)
+                    val request: JsonObjectRequest = @SuppressLint("NullSafeMutableLiveData")
+                    object : JsonObjectRequest(
+                        Method.GET,
+                        url,
+                        null,
+                        { response ->
+
+                            try {
+                                Log.d(tag, response.toString())
+                                val articles: JSONArray = response.getJSONArray("results")
+                                val list: ArrayList<Article?> = ArrayList()
+
+                                for (i in 0 until articles.length()) {
+                                    val item = articles.getJSONObject(i)
+                                    Log.d(tag, "Article added: $item")
+                                    val article = Gson().fromJson<Article>(
+                                        item.toString(),
+                                        Article::class.java
+                                    )
+                                    list.add(article)
+                                }
+                                _articles.postValue(list)
+                                Log.d(tag, "Article list size " + list.size)
+                                if (list.isEmpty()) {
+                                    _onRequestResult.value =
+                                        OnRequestResult.Error(application.getString(R.string.empty_articles))
+                                }
+                            } catch (e: Exception) {
+                                Log.d(tag, e.toString())
                                 _onRequestResult.value =
-                                    OnRequestResult.Error(application.getString(R.string.empty_articles))
+                                    OnRequestResult.Error(application.getString(R.string.error_parsing_data))
+
                             }
-                        } catch (e: Exception) {
-                            Log.d(tag, e.toString())
-                            application.getString(R.string.error_parsing_data)
-                        }
 
-                    }, { error ->
-                        error.printStackTrace()
-                        Log.d(tag, error.toString())
-                        _onRequestResult.value =
-                            OnRequestResult.Error(application.getString(R.string.error_parsing_data))
+                        }, { error ->
+                            error.printStackTrace()
+                            Log.d(tag, error.toString())
+                            _onRequestResult.value =
+                                OnRequestResult.Error(application.getString(R.string.error_parsing_data))
 
-                    }) {
+                        }) {
 
+                    }
+
+                    request.retryPolicy = DefaultRetryPolicy(
+                        10000,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                    )
+
+                    request.setShouldCache(false)
+                    queue.add(request)
+                } else {
+                    _onRequestResult.value =
+                        OnRequestResult.Error(
+                            application.getString(R.string.error_api_key)
+                        )
                 }
 
-                request.retryPolicy = DefaultRetryPolicy(
-                    10000,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-                )
-
-                request.setShouldCache(false)
-                queue.add(request)
             }
         } else {
             _onRequestResult.value =
@@ -116,7 +132,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     //The class OnRequestResult is used to handle the messages to the user about the request result
     sealed class OnRequestResult {
-        object Success : OnRequestResult()
+        data object Success : OnRequestResult()
         data class Error(val message: String) : OnRequestResult()
     }
 

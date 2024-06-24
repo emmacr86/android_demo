@@ -28,11 +28,12 @@ import com.emmanuel.demo_nyt.presentation.theme.PrimaryColor
 @Composable
 fun ErrorDialog(
     onDialogDismiss: () -> Unit,
+    title: String = "An error occurred!",
     message: String
 ) {
     AlertDialog(
         onDismissRequest = { onDialogDismiss() },
-        title = { Text(text = "An error occurred!") },
+        title = { Text(text = title) },
         text = { Text(text = message) },
         confirmButton = {
             Button(

@@ -2,7 +2,10 @@
     <string name="app_name">Demo-NYTimes</string>
     <string name="error_network">There is no internet connection</string>
     <string name="error_parsing_data">An error occurred while getting the data. Try later!</string>
+    <string name="error_api_key">The app requires an API key. Please create or update it in the settings</string>
     <string name="empty_articles">There is no articles to show. Try later!</string>
     <string name="articles_url">https://api.nytimes.com/svc/topstories/v2/home.json?api-key=</string>
     <string name="share_extra_subject">App Demo</string>
+    <!--Set the api key in the variable api_key-->
+    <string name="api_key"></string>
 </resources>
