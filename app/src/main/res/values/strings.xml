@@ -4,4 +4,5 @@
     <string name="error_parsing_data">An error occurred while getting the data. Try later!</string>
     <string name="empty_articles">There is no articles to show. Try later!</string>
     <string name="articles_url">https://api.nytimes.com/svc/topstories/v2/home.json?api-key=</string>
+    <string name="share_extra_subject">App Demo</string>
 </resources>

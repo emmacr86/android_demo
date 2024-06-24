@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.emmanuel.demo_nyt.presentation.theme.PrimaryColor
-import com.emmanuel.demo_nyt.presentation.ui.navigation.BottomNavigationRoutes
+import com.emmanuel.demo_nyt.presentation.ui.navigation.NavigationRoutes
 
 /**
  * App Bar.
@@ -25,22 +25,37 @@ import com.emmanuel.demo_nyt.presentation.ui.navigation.BottomNavigationRoutes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(navController: NavHostController) {
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination?.route
-    val currentLabel = currentDestination?.substringAfterLast('/')
 
-    // Check if the current destination is the details screen for hide/show button
-    val canPopBackStack =
-        navBackStackEntry != null && navBackStackEntry?.destination?.route == BottomNavigationRoutes.Details.route
+    val routeTitleMap = mapOf(
+        NavigationRoutes.Home.route to "Home",
+        "Details" to "Details"
+    )
+
+    // Set the title depending on the current screen
+    val currentLabel = when {
+        currentDestination != null && routeTitleMap.containsKey(currentDestination) -> {
+            routeTitleMap[currentDestination]?:"App Demo"
+        }
+        currentDestination?.startsWith("Details") == true -> {
+            "Details"
+        }
+        else -> {
+            "App Demo"
+        }
+    }
+
+    val canPopBackStack = navController.previousBackStackEntry != null
+    val isDetailsScreen = currentDestination?.startsWith("Details") == true
 
     TopAppBar(
-        title = { Text(text = currentLabel.toString(), color = Color.White) },
+        title = { Text(text = currentLabel, color = Color.White) },
         navigationIcon = {
-            if (canPopBackStack) {
+            if (isDetailsScreen && canPopBackStack) {
                 IconButton(
                     onClick = {
-                        navController.previousBackStackEntry
+                        navController.popBackStack()
                     }
                 ) {
                     Icon(
@@ -49,7 +64,6 @@ fun AppBar(navController: NavHostController) {
                         tint = Color.White,
                     )
                 }
-
             }
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(

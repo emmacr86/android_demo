@@ -21,8 +21,11 @@ import androidx.navigation.NavController
 import com.emmanuel.demo_nyt.presentation.ui.components.EmptyBackground
 import com.emmanuel.demo_nyt.presentation.ui.components.ErrorDialog
 import com.emmanuel.demo_nyt.presentation.ui.components.HomeCardView
+import com.emmanuel.demo_nyt.presentation.ui.navigation.NavigationRoutes
 import com.emmanuel.demo_nyt.presentation.viewmodel.HomeViewModel
 import com.emmanuel.demo_nyt.presentation.viewmodel.HomeViewModelFactory
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 /**
  * Home Screen to display the articles.
@@ -73,7 +76,16 @@ fun HomeScreen(
                     HomeCardView(
                         article = article,
                         onClick = {
-                            navController.navigate("details")
+                            navController.navigate(
+                                NavigationRoutes.Details.createRoute(
+                                    title = article?.title ?: "",
+                                    abstract = article?.abstract ?: "",
+                                    url = encodeUrl(article?.url),
+                                    publishedDate = article?.published_date ?: "",
+                                    mediaUrl = encodeUrl(article?.multimedia?.get(0)?.url),
+                                    desFacet = (article?.des_facet ?: "").toString()
+                                )
+                            )
                         },
                     )
                 }
@@ -86,4 +98,15 @@ fun HomeScreen(
         }
     }
 
+}
+
+/* Navigation in compose require to encodes the url to avoid special characters is possible to add a
+   different url if the url from the request fail. In this case I returned in the elvis operator the
+   empty string for show a blue background */
+fun encodeUrl(url: String?): String {
+    return try {
+        URLEncoder.encode(url ?: "https://www.google.com/", StandardCharsets.UTF_8.toString())
+    } catch (e: Exception) {
+        "https://www.google.com/"
+    }
 }
