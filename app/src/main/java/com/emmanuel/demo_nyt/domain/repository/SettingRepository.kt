@@ -6,9 +6,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 //Repository class with context Dispatchers IO for insert and get the settings from the database
-class SettingsRepository {
+//The classes are open to be overridden in the tests
+open class SettingsRepository {
 
-    suspend fun insertSetting(setting: Setting): Boolean {
+    open suspend fun insertSetting(setting: Setting): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 DemoApplication.database.settingDao().insertOrUpdate(setting)
@@ -20,7 +21,7 @@ class SettingsRepository {
         }
     }
 
-    suspend fun getSettingByName(settingName: String): Setting? {
+    open suspend fun getSettingByName(settingName: String): Setting? {
         return withContext(Dispatchers.IO) {
             DemoApplication.database.settingDao().getSettingByName(settingName)
         }
