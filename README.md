@@ -1,6 +1,6 @@
 # android demo NYTimes
 
-The demos is a NY Times Article Viewer App! This app is built in Kotlin using Jetpack Compose, designed to fetch and display articles from the New York Times API. Below you will find features and instructions to get started:
+The demo is a NY Times Article Viewer App! This app is built in Kotlin using Jetpack Compose, designed to fetch and display articles from the New York Times API. Below you will find features and instructions to get started:
 
 Features:
 
